@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodeSync
+
+Real-time collaborative code editor — a minimal CodeSandbox Live / Google Docs experience for code. Multiple people edit the same project simultaneously with conflict-free CRDT sync, live colored cursors, chat, voice, version history, and an instant HTML preview.
+
+## Features
+
+### Core (MVP)
+- **Conflict-free sync** — Yjs CRDT merges concurrent edits without conflicts
+- **Peer-to-peer** — WebRTC via `y-webrtc` (no dedicated sync server)
+- **Live cursors** — See every collaborator's cursor and selection in color
+- **Online users** — Sidebar with avatars, names, and presence
+- **Live preview** — Sandpack renders HTML/CSS/JS in an isolated iframe
+- **No login** — Random name + color assigned automatically (editable)
+
+### Extended
+- **Multi-file project** — Tabbed editor for `index.html`, `styles.css`, `script.js` (+ add files)
+- **Room chat** — Text chat synced via Yjs
+- **Voice chat** — WebRTC audio mesh with Yjs signaling
+- **Version history** — Save named snapshots and restore previous states
+- **Undo / Redo** — Per-user undo for the active file (`Y.UndoManager`)
+- **Persistence** — Auto-saves room state to JSON via API (survives refresh)
+- **Read-only mode** — Share `?view=1` links for viewers
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 14+ (App Router), TypeScript |
+| Editor | Monaco Editor (`@monaco-editor/react`) |
+| CRDT | Yjs + `y-monaco` binding |
+| Transport | `y-webrtc` (signaling: `wss://signaling.yjs.dev`) |
+| Preview | `@codesandbox/sandpack-react` |
+| Persistence | Next.js API routes + JSON files (`data/rooms/`) |
+| Styling | Tailwind CSS |
+| State | Zustand |
+
+## Why Yjs / CRDT?
+
+Traditional real-time editing uses Operational Transformation (OT) — complex to implement correctly. **CRDTs** let every client apply edits locally and merge them deterministically. Yjs handles this for shared text, and `y-monaco` wires it directly into Monaco Editor.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000), click **Create new room**, then open the same room URL in a second tab.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Quick test
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a room on the home page
+2. Copy the room link and open in another tab
+3. Type in one tab — changes appear instantly in the other
+4. Try chat, file tabs, save a version snapshot
+5. Copy the **view link** for read-only access
 
-## Learn More
+### Read-only mode
 
-To learn more about Next.js, take a look at the following resources:
+Append `?view=1` to any room URL:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+/room/abc123?view=1
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+app/
+  page.tsx                         # Landing
+  room/[roomId]/page.tsx           # Room workspace
+  api/rooms/[roomId]/route.ts      # Persistence API
+components/
+  editor/                          # Monaco + file tabs + undo
+  preview/                         # Sandpack live preview
+  chat/                            # Room chat
+  room/                            # Header, users, voice, versions
+  ui/                              # Identity + username badge
+lib/
+  yjs-provider.ts                  # Yjs doc, files, chat, versions
+  persistence.ts                   # Load/save room state
+  voice-chat.ts                    # WebRTC voice mesh
+  room-context.tsx                 # Room provider
+  store.ts                         # Zustand state
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+
+## Limitations
+
+- WebRTC P2P works best with **≤10–15 users** per room
+- Voice chat uses a simple mesh topology (best for small groups)
+- Persistence stores state as JSON files locally (`data/rooms/`) — use Redis/S3 for production
+- Undo/redo applies to **your own edits** on the active file
+
+## Tags
+
+`real-time` · `CRDT` · `collaborative-editor` · `pair-programming` · `yjs` · `monaco-editor` · `nextjs`
+
+## Author
+
+**AmirHossein Ramroudi**
+
+- Email: [ahramroudi1@gmail.com](mailto:ahramroudi1@gmail.com)
+- GitHub: [@theAHR](https://github.com/theAHR)
+- LinkedIn: [in/theahr](https://linkedin.com/in/theahr)
+- Telegram: [@theAHR](https://t.me/theAHR)
+
+## License
+
+MIT

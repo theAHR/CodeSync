@@ -1,21 +1,31 @@
 {
-  "name": "codesync-app",
+  "name": "codesync",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:lan": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
+    "start:lan": "next start --hostname 0.0.0.0",
     "lint": "eslint"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.20.0",
+    "@monaco-editor/react": "^4.7.0",
+    "monaco-editor": "^0.55.1",
+    "nanoid": "^6.0.0",
     "next": "16.2.10",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "y-monaco": "^0.1.6",
+    "y-webrtc": "^10.3.0",
+    "yjs": "^13.6.31",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
