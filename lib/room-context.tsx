@@ -92,17 +92,34 @@ export function RoomProvider({
   const setActiveFile = useAppStore((state) => state.setActiveFile);
   const setChatMessages = useAppStore((state) => state.setChatMessages);
   const setVersions = useAppStore((state) => state.setVersions);
+  const setSyncStatus = useAppStore((state) => state.setSyncStatus);
 
   useEffect(() => {
     let disposed = false;
     let cleanupPersistence: (() => void) | undefined;
+    let activeConn: RoomConnection | null = null;
+    let statusHandler: ((event: { status: string }) => void) | undefined;
 
     const init = async () => {
       try {
+        setSyncStatus("connecting");
         const conn = await acquireRoomConnectionAsync(roomId);
-        if (disposed) return;
+        if (disposed) {
+          releaseRoomConnection(roomId);
+          return;
+        }
 
+        activeConn = conn;
         setConnection(conn);
+        setSyncStatus(conn.getStatus());
+
+        statusHandler = (event: { status: string }) => {
+          if (event.status === "connected") setSyncStatus("connected");
+          else if (event.status === "disconnected") setSyncStatus("disconnected");
+          else setSyncStatus("connecting");
+        };
+        conn.provider.on("status", statusHandler);
+
         await loadRoomState(roomId, conn.ydoc);
         if (disposed) return;
 
@@ -120,6 +137,7 @@ export function RoomProvider({
         setReady(true);
       } catch (error) {
         console.error("Failed to connect to room:", error);
+        setSyncStatus("disconnected");
       }
     };
 
@@ -128,6 +146,9 @@ export function RoomProvider({
     return () => {
       disposed = true;
       setReady(false);
+      if (statusHandler && activeConn) {
+        activeConn.provider.off("status", statusHandler);
+      }
       setConnection(null);
       cleanupPersistence?.();
       releaseRoomConnection(roomId);
@@ -139,6 +160,7 @@ export function RoomProvider({
     setActiveFile,
     setChatMessages,
     setVersions,
+    setSyncStatus,
   ]);
 
   useEffect(() => {

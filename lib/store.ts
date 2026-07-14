@@ -18,6 +18,7 @@ interface AppState {
   chatMessages: ChatMessage[];
   versions: VersionSnapshot[];
   voiceActive: boolean;
+  syncStatus: "connecting" | "connected" | "disconnected";
   setCurrentUser: (user: UserIdentity) => void;
   setLocalClientId: (id: number) => void;
   setOnlineUsers: (users: OnlineUser[]) => void;
@@ -27,6 +28,7 @@ interface AppState {
   setChatMessages: (messages: ChatMessage[]) => void;
   setVersions: (versions: VersionSnapshot[]) => void;
   setVoiceActive: (active: boolean) => void;
+  setSyncStatus: (status: "connecting" | "connected" | "disconnected") => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -39,6 +41,7 @@ export const useAppStore = create<AppState>((set) => ({
   chatMessages: [],
   versions: [],
   voiceActive: false,
+  syncStatus: "connecting",
   setCurrentUser: (user) => set({ currentUser: user }),
   setLocalClientId: (id) => set({ localClientId: id }),
   setOnlineUsers: (users) => set({ onlineUsers: users }),
@@ -48,4 +51,5 @@ export const useAppStore = create<AppState>((set) => ({
   setChatMessages: (messages) => set({ chatMessages: messages }),
   setVersions: (versions) => set({ versions: versions }),
   setVoiceActive: (active) => set({ voiceActive: active }),
+  setSyncStatus: (status) => set({ syncStatus: status }),
 }));

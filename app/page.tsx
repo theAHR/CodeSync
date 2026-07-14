@@ -203,7 +203,7 @@ export default function HomePage() {
             No login required
           </span>
           <span className="rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-xs text-zinc-500">
-            P2P via WebRTC
+            Real-time sync
           </span>
         </div>
       </header>
@@ -370,7 +370,7 @@ export default function HomePage() {
             </button>
           </div>
           <p className="mt-8 text-xs text-zinc-600">
-            No login required ┬╖ Peer-to-peer via WebRTC ┬╖ Open two tabs to try it
+            No login required · Live sync · Open two tabs to try it
           </p>
         </section>
 

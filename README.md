@@ -6,7 +6,7 @@ Real-time collaborative code editor — a minimal CodeSandbox Live / Google Docs
 
 ### Core (MVP)
 - **Conflict-free sync** — Yjs CRDT merges concurrent edits without conflicts
-- **Peer-to-peer** — WebRTC via `y-webrtc` (no dedicated sync server)
+- **Peer-synced** — Real-time sync over WebSocket (works across browsers and networks)
 - **Live cursors** — See every collaborator's cursor and selection in color
 - **Online users** — Sidebar with avatars, names, and presence
 - **Live preview** — Sandpack renders HTML/CSS/JS in an isolated iframe
@@ -28,7 +28,7 @@ Real-time collaborative code editor — a minimal CodeSandbox Live / Google Docs
 | Framework | Next.js 14+ (App Router), TypeScript |
 | Editor | Monaco Editor (`@monaco-editor/react`) |
 | CRDT | Yjs + `y-monaco` binding |
-| Transport | `y-webrtc` (signaling: `wss://signaling.yjs.dev`) |
+| Transport | `y-websocket` (public demo relay: `wss://demos.yjs.dev/ws`) |
 | Preview | `@codesandbox/sandpack-react` |
 | Persistence | Next.js API routes + JSON files (`data/rooms/`) |
 | Styling | Tailwind CSS |
@@ -95,7 +95,7 @@ lib/
 
 ## Limitations
 
-- WebRTC P2P works best with **≤10–15 users** per room
+- Sync works best with small groups (demo WebSocket relay is shared/public)
 - Voice chat uses a simple mesh topology (best for small groups)
 - Persistence stores state as JSON files locally (`data/rooms/`) — use Redis/S3 for production
 - Undo/redo applies to **your own edits** on the active file

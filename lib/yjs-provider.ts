@@ -1,17 +1,27 @@
 import * as Y from "yjs";
-import { WebrtcProvider } from "y-webrtc";
-import { DEFAULT_ACTIVE_FILE, DEFAULT_FILES } from "./constants";
+import { WebsocketProvider } from "y-websocket";
+import { DEFAULT_FILES } from "./constants";
 import type { ChatMessage, VersionSnapshot } from "./types";
+
+export type SyncStatus = "connecting" | "connected" | "disconnected";
 
 export interface RoomConnection {
   ydoc: Y.Doc;
-  provider: WebrtcProvider;
+  provider: WebsocketProvider;
   files: Y.Map<Y.Text>;
   chat: Y.Array<ChatMessage>;
   versions: Y.Array<VersionSnapshot>;
   voiceSignals: Y.Array<unknown>;
-  awareness: WebrtcProvider["awareness"];
+  awareness: WebsocketProvider["awareness"];
   getFileText: (filename: string) => Y.Text;
+  getStatus: () => SyncStatus;
+}
+
+const WS_SERVER =
+  process.env.NEXT_PUBLIC_YJS_WS_URL ?? "wss://demos.yjs.dev/ws";
+
+function roomTopic(roomId: string): string {
+  return `codesync-v1-${roomId}`;
 }
 
 function seedDefaultFiles(files: Y.Map<Y.Text>): void {
@@ -53,16 +63,14 @@ export function getAllFileContents(files: Y.Map<Y.Text>): Record<string, string>
 
 export function createRoomConnection(roomId: string): RoomConnection {
   const ydoc = new Y.Doc();
-  const provider = new WebrtcProvider(roomId, ydoc, {
-    signaling: ["wss://signaling.yjs.dev"],
-  });
+  const provider = new WebsocketProvider(WS_SERVER, roomTopic(roomId), ydoc);
 
   const files = ydoc.getMap<Y.Text>("files");
   const chat = ydoc.getArray<ChatMessage>("chat");
   const versions = ydoc.getArray<VersionSnapshot>("versions");
   const voiceSignals = ydoc.getArray<unknown>("voiceSignals");
 
-  const seedContent = () => {
+  const seedIfEmpty = () => {
     if (files.size === 0) {
       migrateLegacyMonacoText(ydoc, files);
     }
@@ -71,8 +79,16 @@ export function createRoomConnection(roomId: string): RoomConnection {
     }
   };
 
-  provider.on("synced", seedContent);
-  seedContent();
+  // Only seed after the first remote sync so peers don't each create
+  // divergent default documents before they can merge.
+  provider.on("sync", (isSynced: boolean) => {
+    if (isSynced) seedIfEmpty();
+  });
+
+  // Fallback if the room is brand new / offline briefly.
+  window.setTimeout(() => {
+    if (files.size === 0) seedIfEmpty();
+  }, 1500);
 
   return {
     ydoc,
@@ -83,6 +99,11 @@ export function createRoomConnection(roomId: string): RoomConnection {
     voiceSignals,
     awareness: provider.awareness,
     getFileText: (filename) => getFileText(files, filename),
+    getStatus: () => {
+      if (provider.wsconnected) return "connected";
+      if (provider.wsconnecting) return "connecting";
+      return "disconnected";
+    },
   };
 }
 
@@ -97,4 +118,4 @@ export function restoreVersionSnapshot(
   }
 }
 
-export { DEFAULT_ACTIVE_FILE };
+export { DEFAULT_ACTIVE_FILE } from "./constants";

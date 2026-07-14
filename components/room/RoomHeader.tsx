@@ -15,6 +15,8 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
   const [copiedLan, setCopiedLan] = useState(false);
   const [lanUrl, setLanUrl] = useState<string | null>(null);
   const isReadOnly = useAppStore((state) => state.isReadOnly);
+  const syncStatus = useAppStore((state) => state.syncStatus);
+  const onlineUsers = useAppStore((state) => state.onlineUsers);
 
   const editUrl = roomUrl(roomId);
   const viewUrl = roomUrl(roomId, true);
@@ -79,7 +81,31 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
               </span>
             )}
           </h1>
-          <p className="truncate font-mono text-xs text-zinc-500">{roomId}</p>
+          <div className="flex items-center gap-2">
+            <p className="truncate font-mono text-xs text-zinc-500">{roomId}</p>
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                syncStatus === "connected"
+                  ? "bg-emerald-500/15 text-emerald-400"
+                  : syncStatus === "connecting"
+                    ? "bg-amber-500/15 text-amber-400"
+                    : "bg-rose-500/15 text-rose-400"
+              }`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  syncStatus === "connected"
+                    ? "bg-emerald-400"
+                    : syncStatus === "connecting"
+                      ? "bg-amber-400"
+                      : "bg-rose-400"
+                }`}
+              />
+              {syncStatus === "connected"
+                ? `${onlineUsers.length} online`
+                : syncStatus}
+            </span>
+          </div>
         </div>
       </div>
 
