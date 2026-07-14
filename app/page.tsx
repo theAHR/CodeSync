@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createRoomId } from "@/lib/create-id";
+import { assetPath } from "@/lib/paths";
 import { LanShareBox } from "@/components/ui/LanShareBox";
 
 const FEATURES = [
@@ -190,11 +191,12 @@ export default function HomePage() {
       <header className="landing-fade-in relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
           <Image
-            src="/icon.png"
+            src={assetPath("/icon.png")}
             alt="CodeSync"
             width={36}
             height={36}
             className="h-9 w-9 rounded-xl object-cover shadow-lg shadow-violet-600/25"
+            unoptimized
           />
           <span className="text-lg font-semibold tracking-tight text-zinc-100">CodeSync</span>
         </div>
@@ -387,11 +389,12 @@ export default function HomePage() {
           >
             <div className="flex min-w-0 items-center gap-3">
               <Image
-                src="/me.png"
+                src={assetPath("/me.png")}
                 alt="Amir Ramroudi"
                 width={48}
                 height={48}
                 className="h-12 w-12 shrink-0 rounded-full border border-zinc-700 object-cover"
+                unoptimized
               />
               <div className="min-w-0 text-left">
                 <p className="truncate text-sm font-semibold text-zinc-100">

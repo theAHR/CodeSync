@@ -25,6 +25,10 @@ export const metadata: Metadata = {
     "yjs",
     "monaco",
   ],
+  icons: {
+    icon: [{ url: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.png` }],
+    apple: [{ url: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.png` }],
+  },
 };
 
 export default function RootLayout({

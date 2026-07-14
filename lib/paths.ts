@@ -1,5 +1,11 @@
 export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+/** Prefix a public asset path with the GitHub Pages basePath when set. */
+export function assetPath(path: string): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${basePath}${normalized}`;
+}
+
 export function roomPath(roomId: string, view = false): string {
   const params = new URLSearchParams({ id: roomId });
   if (view) params.set("view", "1");
