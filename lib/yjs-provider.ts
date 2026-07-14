@@ -1,27 +1,41 @@
 import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
+import { Awareness, encodeAwarenessUpdate, applyAwarenessUpdate } from "y-protocols/awareness";
+import { joinRoom, type Room } from "@trystero-p2p/mqtt";
 import { DEFAULT_FILES } from "./constants";
 import type { ChatMessage, VersionSnapshot } from "./types";
 
 export type SyncStatus = "connecting" | "connected" | "disconnected";
 
+type StatusListener = (event: { status: SyncStatus }) => void;
+
+export interface SyncProvider {
+  awareness: Awareness;
+  destroy: () => void;
+  on: (event: "status", listener: StatusListener) => void;
+  off: (event: "status", listener: StatusListener) => void;
+  getStatus: () => SyncStatus;
+}
+
 export interface RoomConnection {
   ydoc: Y.Doc;
-  provider: WebsocketProvider;
+  provider: SyncProvider;
   files: Y.Map<Y.Text>;
   chat: Y.Array<ChatMessage>;
   versions: Y.Array<VersionSnapshot>;
   voiceSignals: Y.Array<unknown>;
-  awareness: WebsocketProvider["awareness"];
+  awareness: Awareness;
   getFileText: (filename: string) => Y.Text;
   getStatus: () => SyncStatus;
 }
 
-const WS_SERVER =
-  process.env.NEXT_PUBLIC_YJS_WS_URL ?? "wss://demos.yjs.dev/ws";
+const APP_ID = "codesync-github-pages";
 
 function roomTopic(roomId: string): string {
-  return `codesync-v1-${roomId}`;
+  return `codesync-v2-${roomId}`;
+}
+
+function toUint8(data: ArrayBuffer | Uint8Array): Uint8Array {
+  return data instanceof Uint8Array ? data : new Uint8Array(data);
 }
 
 function seedDefaultFiles(files: Y.Map<Y.Text>): void {
@@ -61,9 +75,140 @@ export function getAllFileContents(files: Y.Map<Y.Text>): Record<string, string>
   return result;
 }
 
+function createTrysteroProvider(roomId: string, ydoc: Y.Doc): SyncProvider {
+  const awareness = new Awareness(ydoc);
+  const listeners = new Set<StatusListener>();
+  let status: SyncStatus = "connecting";
+  let room: Room | null = null;
+  let destroyed = false;
+
+  const emitStatus = (next: SyncStatus) => {
+    status = next;
+    for (const listener of listeners) {
+      listener({ status: next });
+    }
+  };
+
+  const originRemote = "trystero-remote";
+
+  try {
+    room = joinRoom(
+      {
+        appId: APP_ID,
+        password: roomId,
+      },
+      roomTopic(roomId),
+    );
+  } catch (error) {
+    console.error("Failed to join Trystero room:", error);
+    emitStatus("disconnected");
+    return {
+      awareness,
+      destroy: () => {
+        destroyed = true;
+        awareness.destroy();
+      },
+      on: (_event, listener) => {
+        listeners.add(listener);
+      },
+      off: (_event, listener) => {
+        listeners.delete(listener);
+      },
+      getStatus: () => status,
+    };
+  }
+
+  const docAction = room.makeAction<Uint8Array>("ydoc");
+  const awarenessAction = room.makeAction<Uint8Array>("awareness");
+
+  const sendFullState = (peerId?: string) => {
+    if (destroyed) return;
+    const update = Y.encodeStateAsUpdate(ydoc);
+    const awarenessUpdate = encodeAwarenessUpdate(
+      awareness,
+      Array.from(awareness.getStates().keys()),
+    );
+
+    if (peerId) {
+      docAction.send(update, { target: peerId });
+      awarenessAction.send(awarenessUpdate, { target: peerId });
+    } else {
+      docAction.send(update);
+      awarenessAction.send(awarenessUpdate);
+    }
+  };
+
+  const handleDocUpdate = (update: Uint8Array, origin: unknown) => {
+    if (destroyed || origin === originRemote) return;
+    docAction.send(update);
+  };
+
+  ydoc.on("update", handleDocUpdate);
+
+  docAction.onMessage = (data) => {
+    if (destroyed) return;
+    Y.applyUpdate(ydoc, toUint8(data as Uint8Array), originRemote);
+  };
+
+  awareness.on("update", ({ added, updated, removed }: { added: number[]; updated: number[]; removed: number[] }) => {
+    if (destroyed) return;
+    const changedClients = added.concat(updated, removed);
+    if (changedClients.length === 0) return;
+    const update = encodeAwarenessUpdate(awareness, changedClients);
+    awarenessAction.send(update);
+  });
+
+  awarenessAction.onMessage = (data) => {
+    if (destroyed) return;
+    applyAwarenessUpdate(awareness, toUint8(data as Uint8Array), originRemote);
+  };
+
+  room.onPeerJoin = (peerId) => {
+    sendFullState(peerId);
+    emitStatus("connected");
+  };
+
+  room.onPeerLeave = () => {
+    // Stay connected as long as the room/signaling is alive.
+    emitStatus("connected");
+  };
+
+  // Signaling joined successfully — ready for peers.
+  emitStatus("connected");
+
+  // Announce current state shortly after join in case peers overlapped.
+  window.setTimeout(() => {
+    if (!destroyed) sendFullState();
+  }, 400);
+
+  return {
+    awareness,
+    destroy: () => {
+      destroyed = true;
+      ydoc.off("update", handleDocUpdate);
+      try {
+        room?.leave();
+      } catch {
+        // ignore
+      }
+      room = null;
+      awareness.destroy();
+      emitStatus("disconnected");
+      listeners.clear();
+    },
+    on: (_event, listener) => {
+      listeners.add(listener);
+    },
+    off: (_event, listener) => {
+      listeners.delete(listener);
+    },
+    getStatus: () => status,
+  };
+}
+
 export function createRoomConnection(roomId: string): RoomConnection {
   const ydoc = new Y.Doc();
-  const provider = new WebsocketProvider(WS_SERVER, roomTopic(roomId), ydoc);
+  const provider = createTrysteroProvider(roomId, ydoc);
 
   const files = ydoc.getMap<Y.Text>("files");
   const chat = ydoc.getArray<ChatMessage>("chat");
@@ -79,16 +224,8 @@ export function createRoomConnection(roomId: string): RoomConnection {
     }
   };
 
-  // Only seed after the first remote sync so peers don't each create
-  // divergent default documents before they can merge.
-  provider.on("sync", (isSynced: boolean) => {
-    if (isSynced) seedIfEmpty();
-  });
-
-  // Fallback if the room is brand new / offline briefly.
-  window.setTimeout(() => {
-    if (files.size === 0) seedIfEmpty();
-  }, 1500);
+  // Give peers a moment to send existing state before seeding defaults.
+  window.setTimeout(seedIfEmpty, 1200);
 
   return {
     ydoc,
@@ -99,11 +236,7 @@ export function createRoomConnection(roomId: string): RoomConnection {
     voiceSignals,
     awareness: provider.awareness,
     getFileText: (filename) => getFileText(files, filename),
-    getStatus: () => {
-      if (provider.wsconnected) return "connected";
-      if (provider.wsconnecting) return "connecting";
-      return "disconnected";
-    },
+    getStatus: () => provider.getStatus(),
   };
 }
 

@@ -22,6 +22,9 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
   const viewUrl = roomUrl(roomId, true);
 
   useEffect(() => {
+    // LAN helper only works with a local Next.js API — skip on GitHub Pages.
+    if (basePath) return;
+
     fetch(`${basePath}/api/network`)
       .then((res) => res.json())
       .then((data: { ips?: string[]; port?: string }) => {

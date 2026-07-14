@@ -13,6 +13,9 @@ export function LanShareBox({ roomPath = "" }: { roomPath?: string }) {
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
+    // LAN helper only works with a local Next.js API — skip on GitHub Pages.
+    if (basePath) return;
+
     fetch(`${basePath}/api/network`)
       .then((res) => res.json())
       .then((data: NetworkInfo) => setNetwork(data))
