@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { basePath } from "@/lib/paths";
 
 interface NetworkInfo {
   ips: string[];
@@ -12,7 +13,7 @@ export function LanShareBox({ roomPath = "" }: { roomPath?: string }) {
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/network")
+    fetch(`${basePath}/api/network`)
       .then((res) => res.json())
       .then((data: NetworkInfo) => setNetwork(data))
       .catch(() => setNetwork(null));

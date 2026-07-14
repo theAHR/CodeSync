@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useState } from "react";
@@ -9,7 +9,7 @@ import { LanShareBox } from "@/components/ui/LanShareBox";
 const FEATURES = [
   {
     title: "CRDT Sync",
-    desc: "Conflict-free merging with Yjs — like Google Docs for code.",
+    desc: "Conflict-free merging with Yjs ΓÇö like Google Docs for code.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
@@ -59,7 +59,7 @@ const FEATURES = [
   },
   {
     title: "Persistence",
-    desc: "Room state auto-saves — survives page refresh.",
+    desc: "Room state auto-saves ΓÇö survives page refresh.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
@@ -79,7 +79,7 @@ const FEATURE_COLORS: Record<string, { icon: string; bg: string; border: string 
 };
 
 const STEPS = [
-  { num: "01", title: "Create a room", desc: "One click — no account needed." },
+  { num: "01", title: "Create a room", desc: "One click ΓÇö no account needed." },
   { num: "02", title: "Share the link", desc: "Send the URL to your teammates." },
   { num: "03", title: "Code together", desc: "Edit, chat, and preview in real time." },
 ];
@@ -189,9 +189,13 @@ export default function HomePage() {
       {/* Nav */}
       <header className="landing-fade-in relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 text-sm font-bold text-white shadow-lg shadow-violet-600/25">
-            CS
-          </div>
+          <Image
+            src="/icon.png"
+            alt="CodeSync"
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-xl object-cover shadow-lg shadow-violet-600/25"
+          />
           <span className="text-lg font-semibold tracking-tight text-zinc-100">CodeSync</span>
         </div>
         <div className="hidden items-center gap-2 sm:flex">
@@ -227,7 +231,7 @@ export default function HomePage() {
 
             <p className="landing-fade-in-delay-3 mt-5 max-w-lg text-lg leading-relaxed text-zinc-400">
               A minimal CodeSandbox Live experience. Multiple people, one document,
-              zero conflicts — powered by CRDTs.
+              zero conflicts ΓÇö powered by CRDTs.
             </p>
 
             <div className="landing-fade-in-delay-4 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -312,7 +316,7 @@ export default function HomePage() {
               Everything you need to pair program
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-zinc-500">
-              Built with Yjs, Monaco, and Sandpack — the same stack powering modern collaborative tools.
+              Built with Yjs, Monaco, and Sandpack ΓÇö the same stack powering modern collaborative tools.
             </p>
           </div>
 
@@ -366,7 +370,7 @@ export default function HomePage() {
             </button>
           </div>
           <p className="mt-8 text-xs text-zinc-600">
-            No login required · Peer-to-peer via WebRTC · Open two tabs to try it
+            No login required ┬╖ Peer-to-peer via WebRTC ┬╖ Open two tabs to try it
           </p>
         </section>
 
@@ -397,7 +401,7 @@ export default function HomePage() {
               </div>
             </div>
             <span className="shrink-0 text-xs text-zinc-500 transition-colors group-hover:text-zinc-300">
-              View on GitHub →
+              View on GitHub ΓåÆ
             </span>
           </a>
         </section>

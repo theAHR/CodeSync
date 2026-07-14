@@ -1,6 +1,11 @@
 import * as Y from "yjs";
 
 const SAVE_DEBOUNCE_MS = 2000;
+const STORAGE_PREFIX = "codesync-room:";
+
+function storageKey(roomId: string): string {
+  return `${STORAGE_PREFIX}${roomId}`;
+}
 
 function uint8ToBase64(bytes: Uint8Array): string {
   let binary = "";
@@ -24,10 +29,10 @@ export async function loadRoomState(
   ydoc: Y.Doc,
 ): Promise<boolean> {
   try {
-    const response = await fetch(`/api/rooms/${roomId}`);
-    if (!response.ok) return false;
+    const raw = localStorage.getItem(storageKey(roomId));
+    if (!raw) return false;
 
-    const data = (await response.json()) as { state?: string };
+    const data = JSON.parse(raw) as { state?: string };
     if (!data.state) return false;
 
     Y.applyUpdate(ydoc, base64ToUint8(data.state), "persistence");
@@ -48,11 +53,13 @@ export function setupRoomPersistence(
     if (disposed) return;
     try {
       const state = uint8ToBase64(Y.encodeStateAsUpdate(ydoc));
-      await fetch(`/api/rooms/${roomId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ state }),
-      });
+      localStorage.setItem(
+        storageKey(roomId),
+        JSON.stringify({
+          state,
+          updatedAt: new Date().toISOString(),
+        }),
+      );
     } catch {
       // persistence is best-effort
     }

@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import { basePath, roomUrl } from "@/lib/paths";
 import { useAppStore } from "@/lib/store";
 
 interface RoomHeaderProps {
@@ -14,20 +16,18 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
   const [lanUrl, setLanUrl] = useState<string | null>(null);
   const isReadOnly = useAppStore((state) => state.isReadOnly);
 
-  const editUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/room/${roomId}`
-      : `/room/${roomId}`;
-
-  const viewUrl = `${editUrl}?view=1`;
+  const editUrl = roomUrl(roomId);
+  const viewUrl = roomUrl(roomId, true);
 
   useEffect(() => {
-    fetch("/api/network")
+    fetch(`${basePath}/api/network`)
       .then((res) => res.json())
       .then((data: { ips?: string[]; port?: string }) => {
         const ip = data.ips?.[0];
         if (ip) {
-          setLanUrl(`http://${ip}:${data.port ?? "3000"}/room/${roomId}`);
+          setLanUrl(
+            `http://${ip}:${data.port ?? "3000"}${basePath}/room/${roomId}/`,
+          );
         }
       })
       .catch(() => setLanUrl(null));
@@ -63,9 +63,13 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
   return (
     <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-950 px-4 py-3">
       <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-600 text-sm font-bold text-white">
-          CS
-        </div>
+        <Image
+          src="/icon.png"
+          alt="CodeSync"
+          width={32}
+          height={32}
+          className="h-8 w-8 shrink-0 rounded-lg object-cover"
+        />
         <div className="min-w-0">
           <h1 className="truncate text-sm font-semibold text-zinc-100">
             CodeSync Room
