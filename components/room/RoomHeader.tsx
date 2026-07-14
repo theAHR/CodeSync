@@ -26,7 +26,7 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
         const ip = data.ips?.[0];
         if (ip) {
           setLanUrl(
-            `http://${ip}:${data.port ?? "3000"}${basePath}/room/${roomId}/`,
+            `http://${ip}:${data.port ?? "3000"}${basePath}/room/?id=${roomId}`,
           );
         }
       })

@@ -1,8 +1,9 @@
 export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function roomPath(roomId: string, view = false): string {
-  const query = view ? "?view=1" : "";
-  return `${basePath}/room/${roomId}/${query}`;
+  const params = new URLSearchParams({ id: roomId });
+  if (view) params.set("view", "1");
+  return `${basePath}/room/?${params.toString()}`;
 }
 
 export function roomUrl(roomId: string, view = false): string {
@@ -11,7 +12,7 @@ export function roomUrl(roomId: string, view = false): string {
   }
 
   const url = new URL(window.location.href);
-  url.pathname = `${basePath}/room/${roomId}/`;
-  url.search = view ? "view=1" : "";
+  url.pathname = `${basePath}/room/`;
+  url.search = view ? `id=${roomId}&view=1` : `id=${roomId}`;
   return url.toString();
 }

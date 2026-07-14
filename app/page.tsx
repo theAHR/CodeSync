@@ -166,14 +166,14 @@ export default function HomePage() {
 
   const createRoom = () => {
     const roomId = createRoomId();
-    router.push(`/room/${roomId}`);
+    router.push(`/room?id=${roomId}`);
   };
 
   const joinRoom = (event: React.FormEvent) => {
     event.preventDefault();
     const trimmed = joinId.trim();
     if (!trimmed) return;
-    router.push(`/room/${trimmed}`);
+    router.push(`/room?id=${trimmed}`);
   };
 
   return (
