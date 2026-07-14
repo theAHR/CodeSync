@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CodeSync — Real-Time Collaborative Code Editor",
+  title: "CodeSync — Collaborative Code Editor",
   description:
-    "Collaborative code editing with CRDT sync, live cursors, and instant HTML preview. Built with Next.js, Yjs, and Monaco Editor.",
+    "Pair program in the browser with live cursors, chat, voice, and instant HTML preview. No accounts, no setup — just share a room link.",
   keywords: [
     "real-time",
     "CRDT",

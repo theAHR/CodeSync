@@ -10,7 +10,7 @@ import { LanShareBox } from "@/components/ui/LanShareBox";
 const FEATURES = [
   {
     title: "CRDT Sync",
-    desc: "Conflict-free merging with Yjs ΓÇö like Google Docs for code.",
+    desc: "Conflict-free merging with Yjs — like Google Docs for code.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
@@ -20,7 +20,7 @@ const FEATURES = [
   },
   {
     title: "Live Cursors",
-    desc: "See where everyone is typing with colored cursors.",
+    desc: "See every collaborator's cursor and selection in color.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 12H18M7.757 14.743l-1.59 1.59M6 12H4.5m2.92-7.257-1.59-1.59M12 18.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
@@ -30,7 +30,7 @@ const FEATURES = [
   },
   {
     title: "Multi-file",
-    desc: "Tabbed HTML, CSS, and JS files in one project.",
+    desc: "Edit HTML, CSS, and JS together in one shared project.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
@@ -40,7 +40,7 @@ const FEATURES = [
   },
   {
     title: "Chat & Voice",
-    desc: "Text chat and WebRTC voice built into every room.",
+    desc: "Built-in room chat and voice — stay in flow while you code.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
@@ -49,21 +49,22 @@ const FEATURES = [
     color: "rose",
   },
   {
-    title: "Versions",
-    desc: "Save snapshots and restore any previous state.",
+    title: "Live Preview",
+    desc: "Instant HTML preview updates as you type.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
       </svg>
     ),
     color: "amber",
   },
   {
-    title: "Persistence",
-    desc: "Room state auto-saves ΓÇö survives page refresh.",
+    title: "No Backend Needed",
+    desc: "Peer-to-peer sync over the web. Create a room and share the link.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
       </svg>
     ),
     color: "sky",
@@ -80,9 +81,9 @@ const FEATURE_COLORS: Record<string, { icon: string; bg: string; border: string 
 };
 
 const STEPS = [
-  { num: "01", title: "Create a room", desc: "One click ΓÇö no account needed." },
-  { num: "02", title: "Share the link", desc: "Send the URL to your teammates." },
-  { num: "03", title: "Code together", desc: "Edit, chat, and preview in real time." },
+  { num: "01", title: "Create a room", desc: "One click — no account needed." },
+  { num: "02", title: "Share the link", desc: "Send the edit URL to your teammates." },
+  { num: "03", title: "Code together", desc: "Edits, chat, and preview sync live." },
 ];
 
 function EditorMockup() {
@@ -205,7 +206,7 @@ export default function HomePage() {
             No login required
           </span>
           <span className="rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-xs text-zinc-500">
-            Real-time sync
+            Peer-to-peer sync
           </span>
         </div>
       </header>
@@ -220,20 +221,20 @@ export default function HomePage() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
               <span className="text-xs font-medium text-violet-300">
-                Real-time collaborative editing
+                Collaborative code editor
               </span>
             </div>
 
             <h1 className="landing-fade-in-delay-2 text-4xl font-bold leading-[1.1] tracking-tight text-zinc-50 sm:text-5xl lg:text-6xl">
-              Code together,{" "}
+              Share a link.{" "}
               <span className="bg-gradient-to-r from-violet-400 via-violet-300 to-cyan-400 bg-clip-text text-transparent">
-                instantly
+                Code live.
               </span>
             </h1>
 
             <p className="landing-fade-in-delay-3 mt-5 max-w-lg text-lg leading-relaxed text-zinc-400">
-              A minimal CodeSandbox Live experience. Multiple people, one document,
-              zero conflicts ΓÇö powered by CRDTs.
+              Pair program in the browser with live cursors, chat, voice, and an
+              instant HTML preview — no accounts, no setup.
             </p>
 
             <div className="landing-fade-in-delay-4 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -315,10 +316,10 @@ export default function HomePage() {
         <section className="mt-24">
           <div className="text-center">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 sm:text-3xl">
-              Everything you need to pair program
+              Built for pair programming
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-zinc-500">
-              Built with Yjs, Monaco, and Sandpack ΓÇö the same stack powering modern collaborative tools.
+              Monaco editor, CRDT sync, and live preview — everything in one room link.
             </p>
           </div>
 
@@ -348,7 +349,7 @@ export default function HomePage() {
         {/* Tech stack */}
         <section className="mt-20">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-2xl border border-zinc-800/40 bg-zinc-900/20 px-8 py-5 backdrop-blur-sm">
-            {["Next.js", "Yjs", "Monaco", "Sandpack", "WebRTC", "Tailwind"].map((tech) => (
+            {["Next.js", "Yjs", "Monaco", "Sandpack", "Trystero", "Tailwind"].map((tech) => (
               <span key={tech} className="font-mono text-xs text-zinc-600 transition-colors hover:text-zinc-400">
                 {tech}
               </span>
@@ -359,20 +360,20 @@ export default function HomePage() {
         {/* Footer CTA */}
         <section className="mt-20 text-center">
           <div className="mx-auto max-w-2xl rounded-3xl border border-zinc-800/60 bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 p-10 backdrop-blur-sm">
-            <h2 className="text-2xl font-bold text-zinc-100">Ready to collaborate?</h2>
+            <h2 className="text-2xl font-bold text-zinc-100">Ready to code together?</h2>
             <p className="mt-2 text-zinc-500">
-              Open two tabs with the same room URL to see real-time sync in action.
+              Create a room, share the link, and start editing in seconds.
             </p>
             <button
               type="button"
               onClick={createRoom}
               className="mt-6 rounded-xl bg-violet-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-600/20 transition-all hover:bg-violet-500 active:scale-[0.98]"
             >
-              Start coding now
+              Create a room
             </button>
           </div>
           <p className="mt-8 text-xs text-zinc-600">
-            No login required · Live sync · Open two tabs to try it
+            No login · Peer-to-peer sync · Share a link to collaborate
           </p>
         </section>
 
@@ -404,7 +405,7 @@ export default function HomePage() {
               </div>
             </div>
             <span className="shrink-0 text-xs text-zinc-500 transition-colors group-hover:text-zinc-300">
-              View on GitHub ΓåÆ
+              View on GitHub →
             </span>
           </a>
         </section>
